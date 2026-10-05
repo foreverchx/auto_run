@@ -1,0 +1,32 @@
+{
+	auto_https disable_redirects
+	admin localhost:2019
+}
+
+(local_upstream) {
+	reverse_proxy https://localhost:{args[0]} {
+		transport http {
+			tls_insecure_skip_verify
+		}
+	}
+}
+
+https://localhost:8443 {
+	tls certs/mycas.crt certs/mycas.key
+
+	handle /cas* {
+		import local_upstream 9443
+	}
+	handle /klaw* {
+		import local_upstream 9444
+	}
+	handle /oms* {
+		import local_upstream 8889
+	}
+	handle /sys* {
+		import local_upstream 8890
+	}
+	handle {
+		respond "local-dev proxy: no local service for {path}" 502
+	}
+}

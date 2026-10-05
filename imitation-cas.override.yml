@@ -1,0 +1,11 @@
+services:
+  redis:
+    profiles: ["bundled-redis"]
+
+  imitation:
+    depends_on: !reset []
+    extra_hosts:
+      - "redis:host-gateway"
+    environment:
+      IMITATION_USERNAME: ${IMITATION_USERNAME:-local-unset}
+      IMITATION_PASSWORD: ${IMITATION_PASSWORD:-local-unset}
